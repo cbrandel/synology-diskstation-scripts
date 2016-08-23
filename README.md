@@ -47,7 +47,7 @@ https://forum.synology.com/enu/viewtopic.php?f=27&t=6396
 
 pre 2016-08-23 see https://github.com/gclayburg/synology-diskstation-scripts/blob/master/README.md
 
-2016-08-23  Fork from gclayburg's version
+2016-08-23  Fork from gclayburg's version and chagnes:
 
 * Scripts auto detect the directory they are run from.
 * poll-dhcp-changes script also uses settings file to determine some filenames
@@ -85,16 +85,15 @@ You will need to:
 4.  Check the "Enabled" button.
 5.  Choose user "root"
 6.  On the schedule tab set the schedule to "Daily", first runtime to 00:00, frequency to "every  1 minute", last runtime to 23:59
-6. On the task settings tab  Key in this in the User-defined script area and click OK:
-
+7. On the task settings tab Key in this in the User-defined script area and click OK:
 ```sh
         /var/services/homes/admin/poll-dhcp-changes.sh
 ```
 (or wherever you put the script).
-7.  Optionally have the task send an email upon failure.
+8. Optionally have the task send an email upon failure.
 
 ## Troubleshooting
 
-Each time this script detects that that there is a DHCP change, DNS will be updated.  It may take up to 10 seconds for DNS to be updated after a new DHCP reservation. When DNS is updated or when an error occurs an entry is added to the Synology logs which can be seen in Log Center.  
+Each time this script detects that that there is a DHCP change, DNS will be updated.  It may take up to 1-2 minutes for DNS to be updated after a new DHCP reservation. When DNS is updated or when an error occurs an entry is added to the Synology logs which can be seen in Log Center.  
 
 You can also view the DNS log from the normal DSM UI.  This can be useful if there is some sort of conflict between static DNS entries that you defined in the DSM DNS UI and new DHCP hostnames.
