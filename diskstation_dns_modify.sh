@@ -9,7 +9,7 @@ ReverseMasterFile=1.168.192.in-addr.arpa
 
 overridesettings(){
   # $1 is both script global variable name and the parameter name in settings file
-  settingsfile=$(dirname $0)/settings
+  settingsfile=$(dirname "$(readlink -f "$0")")/settings
 
   if [ -r $settingsfile ]; then
     if ignoredresult=$(cat $settingsfile | grep $1=); then
@@ -31,9 +31,9 @@ overridesettings ReverseMasterFile
 
 
 #Note: the remainder of this script should not need to be modified
-
+ADMIN_DIR=$(dirname "$(readlink -f "$0")")
 # Note that backup path is also used as a temp folder.
-BackupPath=/var/services/homes/admin/scripts/dns_backups
+BackupPath=$ADMIN_DIR/dns_backups
 ZoneRootDir=/var/packages/DNSServer/target
 ZonePath=$ZoneRootDir/named/etc/zone/master
 DHCPAssigned=/etc/dhcpd/dhcpd.conf
@@ -61,7 +61,7 @@ DHCPLeaseFile=/etc/dhcpd/dhcpd.conf.leases
 
 ##########################################################################
 # Back up the forward and reverse master files
-# Two options: a) One backup which is overwritten each time 
+# Two options: a) One backup which is overwritten each time
 # or b) file is backed up once each day... but only the first use and
 # retained for one year.
 #
@@ -123,8 +123,8 @@ printDhcpAsRecords () {
 		   }
 		}
 	' $DHCPAssigned| sort | cut -f 2- | uniq
-	
-	
+
+
 }
 ##########################################################################
 # FORWARD MASTER FILE FIRST - (Logic is the same for both)
@@ -162,8 +162,6 @@ if ! chown nobody:nobody $BackupPath/$ForwardMasterFile.new $BackupPath/$Reverse
   exit 4
 fi
 chmod 644 $BackupPath/$ForwardMasterFile.new $BackupPath/$ReverseMasterFile.new
-#cp -a $BackupPath/$ForwardMasterFile.new $ZonePath/$ForwardMasterFile 
-#cp -a $BackupPath/$ReverseMasterFile.new $ZonePath/$ReverseMasterFile 
 
 mv -f $BackupPath/$ForwardMasterFile.new $ZonePath/$ForwardMasterFile
 mv -f $BackupPath/$ReverseMasterFile.new $ZonePath/$ReverseMasterFile
