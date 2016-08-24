@@ -47,7 +47,7 @@ https://forum.synology.com/enu/viewtopic.php?f=27&t=6396
 
 pre 2016-08-23 see https://github.com/gclayburg/synology-diskstation-scripts/blob/master/README.md
 
-2016-08-23  Fork from gclayburg's version and chagnes:
+2016-08-23  Fork from gclayburg's version and changes:
 
 * Scripts auto detect the directory they are run from.
 * poll-dhcp-changes script also uses settings file to determine some filenames
@@ -80,16 +80,24 @@ You will need to:
 
 ## Periodically running via Task Scheduler
 1.  Open Task Scheduler
+
 2.  Click Create -> Scheduled Task -> User-defined script
+
 3.  Key in a name for the task.  Anything is fine here.
+
 4.  Check the "Enabled" button.
+
 5.  Choose user "root"
+
 6.  On the schedule tab set the schedule to "Daily", first runtime to 00:00, frequency to "every  1 minute", last runtime to 23:59
+
 7. On the task settings tab Key in this in the User-defined script area and click OK:
-```sh
-        /var/services/homes/admin/poll-dhcp-changes.sh
-```
-(or wherever you put the script).
+
+  ```sh
+          /var/services/homes/admin/poll-dhcp-changes.sh
+  ```
+  (or wherever you put the script).
+
 8. Optionally have the task send an email upon failure.
 
 ## Troubleshooting
