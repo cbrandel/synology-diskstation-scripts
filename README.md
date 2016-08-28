@@ -39,10 +39,6 @@ This is a fork of gclayburg
 
 https://github.com/gclayburg/synology-diskstation-scripts
 
-Writing Synology syslog entries
-
-https://forum.synology.com/enu/viewtopic.php?f=27&t=6396
-
 ### changelog
 
 pre 2016-08-23 see https://github.com/gclayburg/synology-diskstation-scripts/blob/master/README.md
