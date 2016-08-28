@@ -7,6 +7,21 @@ YourNetworkName=home.lan
 ForwardMasterFile=home.lan
 ReverseMasterFile=1.168.192.in-addr.arpa
 
+# the directory where this script lives
+ADMIN_DIR=$(dirname "$(readlink -f "$0")")
+# actually activate the changes
+DO_CHANGE=true
+# DNS reload after the changes: true or false
+DO_RELOAD=true
+# Format of the zone serial (date|integer)
+ZONE_SERIAL=date
+ZoneRootDir=/var/packages/DNSServer/target
+DHCPAssigned=/etc/dhcpd/dhcpd.conf
+DHCPLeases=/etc/dhcpd/dhcpd-leases.log
+DHCPStatic=/etc/dhcpd/dhcpd-static-static.conf
+DHCPeth0=/etc/dhcpd/dhcpd-eth0-static.conf
+DHCPLeaseFile=/etc/dhcpd/dhcpd.conf.leases
+
 overridesettings(){
   # $1 is both script global variable name and the parameter name in settings file
   settingsfile=$(dirname "$(readlink -f "$0")")/settings
@@ -25,33 +40,34 @@ overridesettings(){
 overridesettings YourNetworkName
 overridesettings ForwardMasterFile
 overridesettings ReverseMasterFile
+overridesettings ZoneRootDir
+overridesettings DHCPAssigned
+overridesettings DHCPLeases
+overridesettings DHCPStatic
+overridesettings DHCPeth0
+overridesettings DHCPLeaseFile
+overridesettings DO_RELOAD
+overridesettings DO_CHANGE
 
 #todo automagically determine filenames for forward and reverse zones, so that this file does not need to be edited
 # to work in a default config
 
 
 #Note: the remainder of this script should not need to be modified
-ADMIN_DIR=$(dirname "$(readlink -f "$0")")
 # Note that backup path is also used as a temp folder.
 BackupPath=$ADMIN_DIR/dns_backups
-ZoneRootDir=/var/packages/DNSServer/target
 ZonePath=$ZoneRootDir/named/etc/zone/master
-DHCPAssigned=/etc/dhcpd/dhcpd.conf
 
 # An address may not have been assigned yet so verify
 # the leases log file exists before assigning.
-DHCPLeases=/etc/dhcpd/dhcpd-leases.log
 [ -f $DHCPLeases ] && DHCPAssigned="$DHCPAssigned $DHCPLeases"
 
-DHCPStatic=/etc/dhcpd/dhcpd-static-static.conf
 # this file may not exist if you haven't configured anything in the dhcp static reservations list (mac addr -> ip addr)
 [ -f $DHCPStatic ] && DHCPAssigned="$DHCPAssigned $DHCPStatic"
 
-DHCPeth0=/etc/dhcpd/dhcpd-eth0-static.conf
 #Reportedly, this is the name of the leases file under DSM 6.0.  If it exists, we scan it.
 [ -f $DHCPeth0 ] && DHCPAssigned="$DHCPAssigned $DHCPeth0"
 
-DHCPLeaseFile=/etc/dhcpd/dhcpd.conf.leases
 [ -f $DHCPLeaseFile ] && DHCPAssigned="$DHCPAssigned $DHCPLeaseFile"
 
 ##########################################################################
@@ -163,11 +179,14 @@ if ! chown nobody:nobody $BackupPath/$ForwardMasterFile.new $BackupPath/$Reverse
 fi
 chmod 644 $BackupPath/$ForwardMasterFile.new $BackupPath/$ReverseMasterFile.new
 
-mv -f $BackupPath/$ForwardMasterFile.new $ZonePath/$ForwardMasterFile
-mv -f $BackupPath/$ReverseMasterFile.new $ZonePath/$ReverseMasterFile
-
+if [ "$DO_CHANGE" == "true" ]; then
+  mv -f $BackupPath/$ForwardMasterFile.new $ZonePath/$ForwardMasterFile
+  mv -f $BackupPath/$ReverseMasterFile.new $ZonePath/$ReverseMasterFile
+fi
 ##########################################################################
 # Reload the server config after modifications
-$ZoneRootDir/script/reload.sh
+if [ "$DO_RELOAD" == "true" ]; then
+  $ZoneRootDir/script/reload.sh
+fi
 
 exit 0

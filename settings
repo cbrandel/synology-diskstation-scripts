@@ -1,3 +1,12 @@
 YourNetworkName=garyclayburg.com
 ForwardMasterFile=garyclayburg.com
 ReverseMasterFile=1.168.192.in-addr.arpa
+ZoneRootDir=/var/packages/DNSServer/target
+DHCPAssigned=/etc/dhcpd/dhcpd.conf
+DHCPLeases=/etc/dhcpd/dhcpd-leases.log
+DHCPStatic=/etc/dhcpd/dhcpd-static-static.conf
+DHCPeth0=/etc/dhcpd/dhcpd-eth0-static.conf
+DHCPLeaseFile=/etc/dhcpd/dhcpd.conf.leases
+DO_CHANGE=true
+DO_RELOAD=false
+ZONE_SERIAL=date
